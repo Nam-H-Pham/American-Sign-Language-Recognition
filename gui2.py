@@ -11,6 +11,7 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
 def start_timer():
     global game_status
+    print('>>>Timer thread loaded')
     while True:
         if game_status == True:
             start = timer()
@@ -21,6 +22,9 @@ def start_timer():
 def ASL_guess():
     global game_status
     cap = cv2.VideoCapture(0)
+    print('>>>Capture thread loaded')
+    canvas.itemconfigure(lblInstructions, text = "Click 'Begin' to start" )
+    button_1.place(x=111, y=97) 
     while True:
         if game_status == True:
             correct_confirmation = 0
@@ -38,46 +42,26 @@ def ASL_guess():
                         button_1.place(x=111, y=97) 
                         break
                     try:
+                        guess = ""
                         guess, image = EstimateASL.get_prediction(image)
-                        #cv2.putText(image,guess,(50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
                         if guess.lower() == letters2learn[0].lower():
                             correct_confirmation += 1
                         if correct_confirmation >= correct_confirmation_threshold: #if number of frames with matching guesses matches a threshhold (fixes random validations and artifacts)
                             letters2learn.pop(0)
                             canvas.itemconfigure(lblPresentLetter, text = letters2learn[0].upper())
-                            canvas.itemconfigure(lblProgress, text = "Letters Learnt: "+ str(26-len(letters2learn)) +"/"+str(len(ALPHABET)),)
+                            canvas.itemconfigure(lblProgress, text = "Letters Learnt: "+ str(26-len(letters2learn)) +"/26",)
                             correct_confirmation = 0        
                     except:
                         pass
 
-                    cv2.putText(image,"confidence: "+str(correct_confirmation)+'/'+str(correct_confirmation_threshold),(50,60), cv2.FONT_HERSHEY_COMPLEX, 0.75, (255, 255, 255), 1, cv2.LINE_AA)    
-
+                    cv2.putText(image,"Confidence: "+str(correct_confirmation)+'/'+str(correct_confirmation_threshold),(50,60), cv2.FONT_HERSHEY_COMPLEX, 0.75, (255, 255, 255), 1, cv2.LINE_AA)    
+                    cv2.putText(image,"Estimation: "+guess,(50,90), cv2.FONT_HERSHEY_COMPLEX, 0.75, (255, 255, 255), 1, cv2.LINE_AA)
+                   
                     cv2.imshow('Camera', image)
                     if cv2.waitKey(5) & 0xFF == 27: #press escape to break
                                 break
             cv2.destroyAllWindows()
-
-guess_thread = threading.Thread(target = ASL_guess, name = 'ASL guesser')
-timer_thread = threading.Thread(target = start_timer, name = 'Timer')
-
-game_status = False
-
-guess_thread.start()
-timer_thread.start()
-
-def Begin_Test():
-    global letters2learn, ALPHABET, game_status, button_1
-    ALPHABET = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    letters2learn = ALPHABET
-    canvas.itemconfigure(lblPresentLetter, text = letters2learn[0].upper())
-    canvas.itemconfigure(lblInstructions, text = "Create This Letter:" )
-    game_status = True
-    button_1.place(x=-500, y=-500) 
-
-def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
-
 
 window = Tk()
 
@@ -85,7 +69,9 @@ window.geometry("836x517")
 window.configure(bg = "#FFFFFF")
 window.title('Learn the ASL Alphabet')
 
-
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
+    
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -176,7 +162,7 @@ lblInstructions = canvas.create_text(
     140.0,
     237.0,
     anchor="nw",
-    text="Click 'Begin' to start",
+    text="Loading Prerequisites...",
     fill="#000000",
     font=("Microsoft YaHei Light", 18 * -1)
 )
@@ -189,5 +175,26 @@ lblPresentLetter = canvas.create_text(
     fill="#000000",
     font=("Microsoft YaHei Light", 96 * -1)
 )
+
+guess_thread = threading.Thread(target = ASL_guess, name = 'ASL guesser')
+timer_thread = threading.Thread(target = start_timer, name = 'Timer')
+
+game_status = False
+
+guess_thread.start()
+timer_thread.start()
+
+button_1.place(x=-500, y=-500) 
+def Begin_Test():
+    global letters2learn, ALPHABET, game_status, button_1
+    ALPHABET = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    letters2learn = ALPHABET
+    canvas.itemconfigure(lblPresentLetter, text = letters2learn[0].upper())
+    canvas.itemconfigure(lblInstructions, text = "Create This Letter:" )
+    canvas.itemconfigure(lblProgress, text = "Letters Learnt: 0/26",)
+    game_status = True
+    button_1.place(x=-500, y=-500) 
+
+
 window.resizable(False, False)
 window.mainloop()
