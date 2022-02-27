@@ -1,5 +1,5 @@
 # American-Sign-Language-Recognition
-An application testing a user's abilities as they cycle through creating each letter of the American Sign Language Alphabet. Users now interact with a GUI in which the program can guess and validate a user's signs in real time.
+An application testing a user's abilities as they cycle through creating each letter of the American Sign Language Alphabet. Players can now interact with a GUI in which the program guesses and validate the user's signs in real time.
 
 # Demo
 ![Demogif](https://github.com/Nam-H-Pham/American-Sign-Language-Recognition/blob/main/ASLDemo3.gif)
