@@ -1,8 +1,7 @@
 # American-Sign-Language-Recognition
-Recognise and learn ASL hand signs.
+An application testing a user's abilities as they cycle through creating each letter of the American Sign Language Alphabet. Users now interact with a GUI in which the program can guess and validate a user's signs in real time.
 
 # Demo
-Users can now interact with a GUI. The program can guess and validate a user's signs in real time as they progress through the entire alphabet.
 ![Demogif](https://github.com/Nam-H-Pham/American-Sign-Language-Recognition/blob/main/ASLDemo3.gif)
 
 # Earlier Demo
